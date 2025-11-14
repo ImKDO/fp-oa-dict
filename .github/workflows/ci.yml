@@ -17,14 +17,12 @@ jobs:
         uses: ocaml/setup-ocaml@v3
         with:
           ocaml-compiler: 5.3.0
-      
+
       - name: Install Depencies
         run: opam install . --deps-only --with-test
-      
+
       - name: Formatting
-        run: 
+        run:
 
       - name: Build
         run: opam exec -- dune build
-
-      - name: 
