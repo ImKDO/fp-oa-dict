@@ -1,0 +1,37 @@
+# dune fmt
+# OCAMLPARAM: unset
+# Shared cache: enabled-except-user-rules
+# Shared cache location:
+# C:\Users\KDO\AppData\Local\Microsoft\Windows\INetCache\dune\db
+# Workspace root: "C:\\Users\\KDO\\Desktop\\main\\FP\\Lab2"
+# Auto-detected concurrency: 16
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; instrument_with = []
+#  }
+$ C:\Users\KDO\AppData\Local\opam\default\bin\ocamlc.opt.exe -config > C:\Users\KDO\AppData\Local\Temp\dune_e972c1_output
+$ (cd _build/default && C:\Users\KDO\AppData\Local\opam\default\bin\ocamlformat.exe --impl bin/main.ml) > _build/default/bin/.formatted/main.ml
+$ (cd _build/default && C:\Users\KDO\AppData\Local\opam\default\bin\ocamlformat.exe --intf lib/oa_dict.mli) > _build/default/lib/.formatted/oa_dict.mli
+$ (cd _build/default && C:\Users\KDO\AppData\Local\opam\default\bin\ocamlformat.exe --impl lib/oa_dict.ml) > _build/default/lib/.formatted/oa_dict.ml
+$ (cd _build/default && C:\Users\KDO\AppData\Local\opam\default\bin\ocamlformat.exe --impl test/test_Lab2.ml) > _build/default/test/.formatted/test_Lab2.ml
+$ "C:\Program Files\Git\cmd\git.exe" --no-pager diff --no-index --color=always -u --ignore-cr-at-eol _build/default/bin/main.ml _build/default/bin/.formatted/main.ml
+> diff --git a/_build/default/bin/main.ml b/_build/default/bin/.formatted/main.ml
+> index 89341db..0b33aca 100644
+> --- a/_build/default/bin/main.ml
+> +++ b/_build/default/bin/.formatted/main.ml
+> @@ -1,6 +1 @@
+> -
+> -
+> -
+> -
+> -
+> -            let () = print_endline "Hello World!"
+> +let () = print_endline "Hello World!"
+> warning: in the working copy of '_build/default/bin/main.ml', LF will be replaced by CRLF the next time Git touches it
+> warning: in the working copy of '_build/default/bin/.formatted/main.ml', LF will be replaced by CRLF the next time Git touches it
+[1]
