@@ -1,13 +1,16 @@
 module type Dict = sig
-  type ('k, 'v) t
+  type key = int
+  type 'v t
 
-  val empty : ('k, 'v) t
-  val is_empty : ('k, 'v) t -> bool -> ('k, 'v) t
-  val insert : ('k, 'v) t -> ('k -> 'v) -> ('k, 'v) t
-  val remove : ('k, 'v) t -> 'k -> ('k, 'v) t
-  val map : ('k, 'v) t -> ('f -> 'r) -> ('k, 'v) t
-  val filter : ('k, 'v) t -> ('f -> bool) -> ('k, 'v) t
-  val fold_left : ('k, 'v) t -> ('acc -> 'k -> 'v -> 'acc) -> ('k, 'v) t
-  val fold_right : ('k, 'v) t -> ('k -> 'v -> 'acc -> 'acc) -> ('k, 'v) t
-  val concat : ('k1, 'v1) t -> ('k2, 'v2) t -> ('k, 'v) t
+  val empty : 'v t
+  val is_empty : 'v t -> bool
+  val insert : key -> 'v -> 'v t -> 'v t
+  val remove : key -> 'v t -> 'v t
+  val map : 'v t -> ('f -> 'r) -> 'v t
+  val filter : 'v t -> ('f -> bool) -> 'v t
+  val fold_left : 'v -> ('acc -> key -> 'v -> 'acc) -> 'v t
+  val fold_right : 'v t -> (key -> 'v -> 'acc -> 'acc) -> 'v t
+  val concat : 'v t -> 'v t -> 'v t
 end
+
+module OA_Dict : Dict
