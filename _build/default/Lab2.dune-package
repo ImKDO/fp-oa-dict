@@ -1,4 +1,0 @@
-(lang dune 3.20)
-(name Lab2)
-(sections (lib .) (bin ../../bin) (doc ../../doc/Lab2))
-(files (lib (META dune-package opam)) (bin (Lab2.exe)) (doc (README.md)))
