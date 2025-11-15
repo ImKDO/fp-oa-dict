@@ -12,13 +12,12 @@ module type Dict = sig
   val filter : 'v t -> ('v -> bool) -> 'v t
   val fold_left : 'acc -> ('acc -> key -> 'v -> 'acc) -> 'v t -> 'acc
   val fold_right : 'v t -> (key -> 'v -> 'acc -> 'acc) -> 'acc -> 'acc
-  
+
   (* Monoid operations *)
   val concat : 'v t -> 'v t -> 'v t
-  
+
   (* Comparison *)
   val equal : ('v -> 'v -> bool) -> 'v t -> 'v t -> bool
-  
   val size : 'v t -> int
   val to_list : 'v t -> (key * 'v) list
   val of_list : (key * 'v) list -> 'v t

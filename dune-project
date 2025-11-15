@@ -22,7 +22,7 @@
  (depends
   (dune (>= 3.20))
   ocaml
-  (ocamlformat)
+  (ocamlformat :with-dev)
   (alcotest :with-test)
   (qcheck :with-test)
   (qcheck-alcotest :with-test)
