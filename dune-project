@@ -22,11 +22,11 @@
  (depends
   (dune (>= 3.20))
   ocaml
+  (ocamlformat)
   (alcotest :with-test)
   (qcheck :with-test)
   (qcheck-alcotest :with-test)
   (odoc :with-doc)
-  (ocamlformat :with-dev)
  )
  (tags
   ("add topics" "to describe" your project)))
