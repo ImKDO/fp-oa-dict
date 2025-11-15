@@ -19,7 +19,13 @@
  (name Lab2)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml)
+ (depends
+  (dune (>= 3.20))
+  ocaml
+  ocamlformat
+  (alcotest :with-test)
+  (odoc :with-doc)
+ )
  (tags
   ("add topics" "to describe" your project)))
 
