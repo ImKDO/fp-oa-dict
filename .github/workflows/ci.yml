@@ -19,10 +19,13 @@ jobs:
           ocaml-compiler: 5.3.0
 
       - name: Install Depencies
-        run: opam install . --deps-only --with-test
+        run: opam install . --deps-only --with-test --with-dev
 
       - name: Formatting
         run: opam exec -- dune build @fmt --auto-promote
 
       - name: Build
         run: opam exec -- dune build
+      
+      - name: Test
+        run: opam exec -- dune runtest
