@@ -31,6 +31,9 @@ module OA_Dict = struct
   let load_factor d = float_of_int d.size /. float_of_int (capacity d)
   let hash key cap = abs key mod cap
 
+  let update_array arr idx value =
+    Array.mapi (fun i slot -> if i = idx then value else slot) arr
+
   let rec find_slot buckets key cap idx first_tombstone =
     if idx >= cap then match first_tombstone with Some i -> i | None -> 0
     else
@@ -48,55 +51,55 @@ module OA_Dict = struct
           else find_slot buckets key cap ((idx + 1) mod cap) first_tombstone
 
   let resize d =
-    let new_cap = capacity d * 2 in
-    let new_buckets = Array.make new_cap None in
-    let rec rehash_all idx =
-      if idx >= Array.length d.buckets then ()
-      else begin
-        (match d.buckets.(idx) with
+    let old_buckets = d.buckets in
+    let new_cap = max 1 (capacity d * 2) in
+    let rec rehash idx acc =
+      if idx >= Array.length old_buckets then acc
+      else
+        match old_buckets.(idx) with
         | Pair (k, v) ->
             let h = hash k new_cap in
-            let slot_idx = find_slot new_buckets k new_cap h None in
-            new_buckets.(slot_idx) <- Pair (k, v)
-        | _ -> ());
-        rehash_all (idx + 1)
-      end
+            let slot_idx = find_slot acc k new_cap h None in
+            let updated = update_array acc slot_idx (Pair (k, v)) in
+            rehash (idx + 1) updated
+        | _ -> rehash (idx + 1) acc
     in
-    rehash_all 0;
+    let new_buckets = rehash 0 (Array.make new_cap None) in
     { size = d.size; buckets = new_buckets }
 
   let is_empty d = d.size = 0
 
   let insert k v d =
+    (* Увеличиваем размер при превышении load factor *)
     let d = if load_factor d > 0.7 then resize d else d in
 
     let cap = capacity d in
     let h = hash k cap in
     let idx = find_slot d.buckets k cap h None in
 
-    let new_buckets = Array.copy d.buckets in
-    match new_buckets.(idx) with
-    | Pair (key, _) when key = k ->
-        new_buckets.(idx) <- Pair (k, v);
-        { d with buckets = new_buckets }
-    | _ ->
-        new_buckets.(idx) <- Pair (k, v);
-        { size = d.size + 1; buckets = new_buckets }
+    let new_buckets = update_array d.buckets idx (Pair (k, v)) in
+
+    let new_size =
+      match d.buckets.(idx) with
+      | Pair (key, _) when key = k -> d.size
+      | _ -> d.size + 1
+    in
+
+    { size = new_size; buckets = new_buckets }
 
   let remove k d =
     let cap = capacity d in
     let h = hash k cap in
-    let new_buckets = Array.copy d.buckets in
     let rec search idx count =
       if count >= cap then d
       else
-        match new_buckets.(idx) with
+        match d.buckets.(idx) with
         | None -> d
         | Tombstone -> search ((idx + 1) mod cap) (count + 1)
         | Pair (key, _) ->
-            if key = k then (
-              new_buckets.(idx) <- Tombstone;
-              { size = d.size - 1; buckets = new_buckets })
+            if key = k then
+              let new_buckets = update_array d.buckets idx Tombstone in
+              { size = d.size - 1; buckets = new_buckets }
             else search ((idx + 1) mod cap) (count + 1)
     in
     search h 0
@@ -120,23 +123,14 @@ module OA_Dict = struct
     match find k d with Option.Some _ -> true | Option.None -> false
 
   let map d f =
-    let rec map_slots : type v r.
-        v slot array -> (v -> r) -> int -> r slot array -> r slot array =
-     fun old_buckets func idx acc ->
-      if idx >= Array.length old_buckets then acc
-      else
-        let new_slot =
-          match old_buckets.(idx) with
-          | Pair (k, v) -> Pair (k, func v)
+    let new_buckets =
+      Array.init (Array.length d.buckets) (fun idx ->
+          match d.buckets.(idx) with
+          | Pair (k, v) -> Pair (k, f v)
           | Tombstone -> Tombstone
-          | None -> None
-        in
-        acc.(idx) <- new_slot;
-        map_slots old_buckets func (idx + 1) acc
+          | None -> None)
     in
-    let new_buckets = Array.make (Array.length d.buckets) None in
-    let result_buckets = map_slots d.buckets f 0 new_buckets in
-    { size = d.size; buckets = result_buckets }
+    { size = d.size; buckets = new_buckets }
 
   let filter d pred =
     let rec filter_slots idx acc =
